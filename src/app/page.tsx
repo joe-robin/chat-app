@@ -1,7 +1,6 @@
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import { FC } from "react";
 import Button from "@/components/ui/Button";
+import { db } from "@/lib/db";
+import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
