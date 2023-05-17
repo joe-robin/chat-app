@@ -19,16 +19,19 @@ export const authOptions: NextAuthOptions = {
   adapter: UpstashRedisAdapter(db),
   session: { strategy: 'jwt' },
   pages: { signIn: '/login' },
-  providers: [GoogleProvider(getGoogleCredientials())],
+  providers: [
+    GoogleProvider({
+      clientId: getGoogleCredientials().clientId,
+      clientSecret: getGoogleCredientials().clientSecret,
+    }),
+  ],
   callbacks: {
     async jwt({ token, user }) {
       const dbUser = (await db.get(`user:${token?.id}`)) as User | null
-
       if (!dbUser) {
         token.id = user.id
         return token
       }
-
       return {
         id: dbUser.id,
         name: dbUser.name,
