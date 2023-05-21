@@ -6,11 +6,11 @@ export interface ProvidersProps {
   children: React.ReactNode
 }
 
-export default function Providers(props: ProvidersProps) {
+export default function Providers({ children }: ProvidersProps) {
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
-      {props.children}
+      {children}
     </>
   )
 }
