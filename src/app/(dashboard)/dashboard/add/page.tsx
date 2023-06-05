@@ -1,5 +1,4 @@
 import AddFriendButton from '@/components/AddFriendButton'
-import { FC } from 'react'
 
 export default function Add() {
   return (
