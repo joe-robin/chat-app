@@ -29,14 +29,14 @@ export async function POST(req: Request) {
 
     // Check if the user already added
     const isAlreadyAdded = (await fetchRedis(
-      'sismemeber',
+      'sismember',
       `user:${idToAdd}:incoming_friend_requests`,
       session.user.id
     )) as 0 | 1
 
     // Check if the user already added
     const isAlreadyFriends = (await fetchRedis(
-      'sismemeber',
+      'sismember',
       `user:${idToAdd}:friends`,
       session.user.id
     )) as 0 | 1
