@@ -1,6 +1,6 @@
 import { UpstashRedisAdapter } from '@next-auth/upstash-redis-adapter'
 import { NextAuthOptions } from 'next-auth'
-// import { db } from './db'
+import { db } from './db'
 import GoogleProvider from 'next-auth/providers/google'
 
 function getGoogleCredientials() {
@@ -16,7 +16,7 @@ function getGoogleCredientials() {
 }
 
 export const authOptions: NextAuthOptions = {
-  // adapter: UpstashRedisAdapter(db),
+  adapter: UpstashRedisAdapter(db),
   session: { strategy: 'jwt' },
   pages: { signIn: '/login' },
   providers: [
@@ -26,19 +26,19 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    // async jwt({ token, user }) {
-    //   const dbUser = (await db.get(`user:${token?.id}`)) as User | null
-    //   if (!dbUser) {
-    //     token.id = user.id
-    //     return token
-    //   }
-    //   return {
-    //     id: dbUser.id,
-    //     name: dbUser.name,
-    //     email: dbUser.email,
-    //     picture: dbUser.image,
-    //   }
-    // },
+    async jwt({ token, user }) {
+      const dbUser = (await db.get(`user:${token?.id}`)) as User | null
+      if (!dbUser) {
+        token.id = user.id
+        return token
+      }
+      return {
+        id: dbUser.id,
+        name: dbUser.name,
+        email: dbUser.email,
+        picture: dbUser.image,
+      }
+    },
 
     async session({ session, token }) {
       if (token) {

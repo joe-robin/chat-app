@@ -1,5 +1,4 @@
 'use client'
-
 import Button from '@/components/ui/Button'
 import { signIn } from 'next-auth/react'
 import { FC, useState } from 'react'
@@ -15,7 +14,7 @@ export default function Login(props: FC<pageProps>) {
 
     try {
       await signIn('google')
-    } catch (eror) {
+    } catch (error) {
       toast.error('Something went wrong')
     } finally {
       setLoading(false)

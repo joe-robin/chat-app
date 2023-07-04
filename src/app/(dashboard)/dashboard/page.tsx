@@ -18,7 +18,7 @@ export default async function Home(props: FC<pageProps>) {
   const session = await getServerSession(authOptions)
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24 cursor-progress">
+    <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <Button className="bg-blue-400" size="lg">
         Hi
       </Button>
