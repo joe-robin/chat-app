@@ -1,22 +1,22 @@
 import { UpstashRedisAdapter } from '@next-auth/upstash-redis-adapter'
 import { NextAuthOptions } from 'next-auth'
-import { db } from './db'
+// import { db } from './db'
 import GoogleProvider from 'next-auth/providers/google'
 
 function getGoogleCredientials() {
   const clientId = process.env.GOOGLE_CLIENT_ID as string
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET as string
 
-  if (!clientId || clientId.length === 0)
+  if (!clientId || clientId?.length === 0)
     throw new Error('GOOGLE_CLIENT_ID Not Found')
-  if (!clientSecret || clientSecret.length === 0)
+  if (!clientSecret || clientSecret?.length === 0)
     throw new Error('GOOGLE_CLIENT_SECRET Not Found')
 
   return { clientId, clientSecret }
 }
 
 export const authOptions: NextAuthOptions = {
-  adapter: UpstashRedisAdapter(db),
+  // adapter: UpstashRedisAdapter(db),
   session: { strategy: 'jwt' },
   pages: { signIn: '/login' },
   providers: [
@@ -26,19 +26,19 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      const dbUser = (await db.get(`user:${token?.id}`)) as User | null
-      if (!dbUser) {
-        token.id = user.id
-        return token
-      }
-      return {
-        id: dbUser.id,
-        name: dbUser.name,
-        email: dbUser.email,
-        picture: dbUser.image,
-      }
-    },
+    // async jwt({ token, user }) {
+    //   const dbUser = (await db.get(`user:${token?.id}`)) as User | null
+    //   if (!dbUser) {
+    //     token.id = user.id
+    //     return token
+    //   }
+    //   return {
+    //     id: dbUser.id,
+    //     name: dbUser.name,
+    //     email: dbUser.email,
+    //     picture: dbUser.image,
+    //   }
+    // },
 
     async session({ session, token }) {
       if (token) {
