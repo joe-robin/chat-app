@@ -25,8 +25,6 @@ export default async function Requests() {
     })
   )) as IncomingFriendRequest[]
 
-  console.log(incomingFriendRequests)
-
   return (
     <main className="pt-8">
       <h1 className="mb-8 text-5xl font-bold">Add a friend</h1>
