@@ -6,7 +6,9 @@ import { getServerSession } from 'next-auth'
 import { notFound } from 'next/navigation'
 
 interface ChatProps {
-  chatId: string
+  params: {
+    chatId: string
+  }
 }
 
 async function getChatMessages(chatId: string) {
@@ -19,14 +21,15 @@ async function getChatMessages(chatId: string) {
     )
     const dbMessages = results.map((message) => JSON.parse(message) as Message)
     const reversedDbMessages = dbMessages.reverse()
-    const message = messageArrayValidator.parse(reversedDbMessages)
-    return message
+    const messages = messageArrayValidator.parse(reversedDbMessages)
+    return messages
   } catch (error) {
     notFound()
   }
 }
 
-export default async function Chat(params: ChatProps) {
+export default async function Chat({ params }: ChatProps) {
+  // console.log(params, 'hello')
   const { chatId } = params
   const session = await getServerSession(authOptions)
   if (!session) notFound()

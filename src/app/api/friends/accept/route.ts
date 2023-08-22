@@ -3,8 +3,9 @@ import { authOptions } from '../../../../lib/auth'
 import { getServerSession } from 'next-auth'
 import { fetchRedis } from '../../../../lib/helpers/redis'
 import { db } from '../../../../lib/db'
+import { NextRequest } from 'next/server'
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
     const body = await req.json()
