@@ -1,20 +1,27 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { format } from 'date-fns'
+import Image from 'next/image'
 import { useRef, useState } from 'react'
 
 interface MessagesProps {
   initialMessages: Message[]
   sessionId: string
+  sessionImg: string | null | undefined
+  chatPartner: User
 }
 
 export default function Messages({
   initialMessages,
   sessionId,
+  sessionImg,
+  chatPartner,
 }: MessagesProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages)
 
   const scrollDownRef = useRef<HTMLDivElement | null>(null)
+  const formatTimeStamp = (timeStamp: number) => format(timeStamp, 'HH:mm')
   return (
     <div
       id={'messages'}
@@ -59,10 +66,27 @@ export default function Messages({
                   })}
                 >
                   {message.text}{' '}
-                  <span className="ml-2 text-xs text-gray-400">
-                    {message.timeStamp}
+                  <span className="ml-2 text-xs text-gray-300">
+                    {formatTimeStamp(message.timeStamp)}
                   </span>
                 </span>
+              </div>
+              <div
+                className={cn('relative h-6 w-6', {
+                  'order-2': isCurrentUser,
+                  'order-1': !isCurrentUser,
+                  invisible: hasNextMessageFromSameUser,
+                })}
+              >
+                <Image
+                  fill
+                  src={
+                    isCurrentUser ? (sessionImg as string) : chatPartner.image
+                  }
+                  alt="Profile Picture"
+                  referrerPolicy="no-referrer"
+                  className="rounded-full"
+                />
               </div>
             </div>
           </div>
