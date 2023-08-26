@@ -24,13 +24,20 @@ export default function Messages({
     >
       <div ref={scrollDownRef} />
       {messages.map((message, index) => {
-        const isCurrentUser = message.id === sessionId
-        const hasNextMessageFromUser =
-          messages[index - 1].senderId === messages[index].senderId
+        const isCurrentUser = message.senderId === sessionId
+
+        const hasNextMessageFromSameUser =
+          messages[index - 1]?.senderId === messages[index].senderId
+
         return (
-          <div key={`${message.id}-${message.timeStamp}`} id={'chat-message'}>
+          <div
+            className="chat-message"
+            key={`${message.id}-${message.timeStamp}`}
+          >
             <div
-              className={cn('flex items-end', { 'justify-end': isCurrentUser })}
+              className={cn('flex items-end', {
+                'justify-end': isCurrentUser,
+              })}
             >
               <div
                 className={cn(
@@ -43,11 +50,12 @@ export default function Messages({
               >
                 <span
                   className={cn('inline-block rounded-lg px-4 py-2', {
-                    'bg-indog-600 text-white': isCurrentUser,
+                    'bg-indigo-600 text-white': isCurrentUser,
                     'bg-gray-200 text-gray-900': !isCurrentUser,
-                    'rounedd-br-none': hasNextMessageFromUser && isCurrentUser,
+                    'rounded-br-none':
+                      !hasNextMessageFromSameUser && isCurrentUser,
                     'rounded-bl-none':
-                      !hasNextMessageFromUser && !isCurrentUser,
+                      !hasNextMessageFromSameUser && !isCurrentUser,
                   })}
                 >
                   {message.text}{' '}
