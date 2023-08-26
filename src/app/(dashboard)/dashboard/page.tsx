@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 interface pageProps {}
 
-export default async function Home(props: FC<pageProps>) {
+export default async function Home(props: pageProps) {
   // function test() {
   //   console.log("how many times");
   //   return { one: "one", two: "two" };

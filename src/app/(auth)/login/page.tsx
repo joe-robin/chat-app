@@ -4,9 +4,7 @@ import { signIn } from 'next-auth/react'
 import { FC, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
-interface pageProps {}
-
-export default function Login(props: FC<pageProps>) {
+export default function Login() {
   const [loading, setLoading] = useState<boolean>(false)
 
   async function loginWithGoogle() {
@@ -22,8 +20,8 @@ export default function Login(props: FC<pageProps>) {
   }
 
   return (
-    <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
-      <div className="w-full flex flex-col items-center max-w-md space-y-8 bg-yell">
+    <div className="relative flex min-h-full items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+      <div className="bg-yell flex w-full max-w-md flex-col items-center space-y-8">
         <div className="flex flex-col items-center gap-8">
           logo
           <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
@@ -32,7 +30,7 @@ export default function Login(props: FC<pageProps>) {
         </div>
         <Button
           onClick={loginWithGoogle}
-          className="max-w-sm mx-auto w-full"
+          className="mx-auto w-full max-w-sm"
           isLoading={loading}
         >
           {loading ? null : (

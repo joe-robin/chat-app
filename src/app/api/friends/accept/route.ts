@@ -1,11 +1,10 @@
+import { getServerSession } from 'next-auth'
 import { z } from 'zod'
 import { authOptions } from '../../../../lib/auth'
-import { getServerSession } from 'next-auth'
-import { fetchRedis } from '../../../../lib/helpers/redis'
 import { db } from '../../../../lib/db'
-import { NextRequest } from 'next/server'
+import { fetchRedis } from '../../../../lib/helpers/redis'
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions)
     const body = await req.json()
