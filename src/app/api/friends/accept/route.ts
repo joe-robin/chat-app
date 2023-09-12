@@ -1,3 +1,5 @@
+import { pusherServer } from '@/lib/pusher'
+import { toPusherKey } from '@/lib/utils'
 import { getServerSession } from 'next-auth'
 import { z } from 'zod'
 import { authOptions } from '../../../../lib/auth'
@@ -29,14 +31,17 @@ export async function POST(req: Request) {
     if (!hasFriendRequests)
       return new Response('Not Friend Request', { status: 400 })
 
+    // Notify Friend
+
+    pusherServer.trigger(
+      toPusherKey(`user:${idToAdd}friends`),
+      'new_friend',
+      {}
+    )
+
     await db.sadd(`user:${session.user.id}:friends`, idToAdd)
 
     await db.sadd(`user:${idToAdd}:friends`, session.user.id)
-
-    // await db.srem(
-    //   `user:${idToAdd}:outbound_incoming_friend_requests`,
-    //   session.user.id
-    // )
 
     await db.srem(`user:${session.user.id}:incoming_friend_requests`, idToAdd)
     return new Response('ok')

@@ -43,8 +43,6 @@ export default function FriendRequests({
     pusherClient.subscribe(
       toPusherKey(`user:${sessionId}:incoming_friend_requests`)
     )
-    console.log('listening to ', `user:${sessionId}:incoming_friend_requests`)
-
     const friendRequestHandler = ({
       senderId,
       senderEmail,
@@ -60,7 +58,7 @@ export default function FriendRequests({
       )
       pusherClient.unbind('incoming_friend_requests', friendRequestHandler)
     }
-  }, [])
+  }, [sessionId])
 
   return (
     <>
