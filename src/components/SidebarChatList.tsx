@@ -23,12 +23,15 @@ export default function SidebarChatList({
   const router = useRouter()
   const pathname = usePathname()
   const [unseenMessages, setUnseenMessages] = useState<Message[]>([])
+  const [activeChats, setActiveChats] = useState<User[]>(friends)
 
   useEffect(() => {
     pusherClient.subscribe(toPusherKey(`user:${sessionId}:chats`))
     pusherClient.subscribe(toPusherKey(`user:${sessionId}:friends`))
 
-    const newFriendHandler = () => router.refresh()
+    const newFriendHandler = (newFriend: User) => {
+      setActiveChats((prev) => [...prev, newFriend])
+    }
 
     const newChatHandler = (message: ExtendedMessage) => {
       const shouldNotifiy =
@@ -73,7 +76,7 @@ export default function SidebarChatList({
 
   return (
     <ul role="list" className="-mx-2 max-h-[25rem] space-y-1 overflow-y-auto">
-      {friends.sort().map((friend) => {
+      {activeChats.sort().map((friend) => {
         const unseenMessagesCount = unseenMessages.filter((unseenMsg) => {
           return unseenMsg.senderId === friend.id
         }).length
