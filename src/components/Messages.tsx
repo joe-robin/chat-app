@@ -1,20 +1,45 @@
 'use client'
 
-import { cn } from '@/lib/utils'
-import { useRef, useState } from 'react'
+import { pusherClient } from '@/lib/pusher'
+import { cn, toPusherKey } from '@/lib/utils'
+import { format } from 'date-fns'
+import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
 
 interface MessagesProps {
   initialMessages: Message[]
   sessionId: string
+  sessionImg: string | null | undefined
+  chatPartner: User
+  chatId: string
 }
 
 export default function Messages({
   initialMessages,
   sessionId,
+  sessionImg,
+  chatPartner,
+  chatId,
 }: MessagesProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages)
 
   const scrollDownRef = useRef<HTMLDivElement | null>(null)
+  const formatTimeStamp = (timeStamp: number) => format(timeStamp, 'HH:mm')
+
+  useEffect(() => {
+    pusherClient.subscribe(toPusherKey(`chat:${chatId}`))
+
+    const messageHandler = (message: Message) => {
+      setMessages((prev) => [message, ...prev])
+    }
+
+    pusherClient.bind('incoming-message', messageHandler)
+
+    return () => {
+      pusherClient.unsubscribe(toPusherKey(`chat:${chatId}`))
+      pusherClient.unbind('incoming-message', messageHandler)
+    }
+  }, [chatId])
   return (
     <div
       id={'messages'}
@@ -24,13 +49,20 @@ export default function Messages({
     >
       <div ref={scrollDownRef} />
       {messages.map((message, index) => {
-        const isCurrentUser = message.id === sessionId
-        const hasNextMessageFromUser =
-          messages[index - 1].senderId === messages[index].senderId
+        const isCurrentUser = message.senderId === sessionId
+
+        const hasNextMessageFromSameUser =
+          messages[index - 1]?.senderId === messages[index].senderId
+
         return (
-          <div key={`${message.id}-${message.timeStamp}`} id={'chat-message'}>
+          <div
+            className="chat-message"
+            key={`${message.id}-${message.timeStamp}`}
+          >
             <div
-              className={cn('flex items-end', { 'justify-end': isCurrentUser })}
+              className={cn('flex items-end', {
+                'justify-end': isCurrentUser,
+              })}
             >
               <div
                 className={cn(
@@ -43,18 +75,41 @@ export default function Messages({
               >
                 <span
                   className={cn('inline-block rounded-lg px-4 py-2', {
-                    'bg-indog-600 text-white': isCurrentUser,
+                    'bg-blue-600 text-white': isCurrentUser,
                     'bg-gray-200 text-gray-900': !isCurrentUser,
-                    'rounedd-br-none': hasNextMessageFromUser && isCurrentUser,
+                    'rounded-br-none':
+                      !hasNextMessageFromSameUser && isCurrentUser,
                     'rounded-bl-none':
-                      !hasNextMessageFromUser && !isCurrentUser,
+                      !hasNextMessageFromSameUser && !isCurrentUser,
                   })}
                 >
                   {message.text}{' '}
-                  <span className="ml-2 text-xs text-gray-400">
-                    {message.timeStamp}
+                  <span
+                    className={cn('ml-2 text-xs', {
+                      'text-gray-400': !isCurrentUser,
+                      'text-gray-100': isCurrentUser,
+                    })}
+                  >
+                    {formatTimeStamp(message.timeStamp)}
                   </span>
                 </span>
+              </div>
+              <div
+                className={cn('relative h-6 w-6', {
+                  'order-2': isCurrentUser,
+                  'order-1': !isCurrentUser,
+                  invisible: hasNextMessageFromSameUser,
+                })}
+              >
+                <Image
+                  fill
+                  src={
+                    isCurrentUser ? (sessionImg as string) : chatPartner.image
+                  }
+                  alt="Profile Picture"
+                  referrerPolicy="no-referrer"
+                  className="rounded-full"
+                />
               </div>
             </div>
           </div>

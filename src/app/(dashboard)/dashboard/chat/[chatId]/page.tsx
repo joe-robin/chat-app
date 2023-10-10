@@ -42,7 +42,13 @@ export default async function Chat({ params }: ChatProps) {
   if (user.id !== userId1 && user.id !== userId2) notFound()
 
   const chatPartnerId = user.id === userId1 ? userId2 : userId1
-  const chatPartner = (await db.get(`user:${chatPartnerId}`)) as User
+
+  const chatPartnerRaw = (await fetchRedis(
+    'get',
+    `user:${chatPartnerId}`
+  )) as string
+
+  const chatPartner = JSON.parse(chatPartnerRaw)
   const initialMessages = await getChatMessages(chatId)
 
   return (
@@ -70,8 +76,14 @@ export default async function Chat({ params }: ChatProps) {
           </div>
         </div>
       </div>
-      <Messages initialMessages={initialMessages} sessionId={session.user.id} />
-      <ChatInput chatPartner={chatPartner} />
+      <Messages
+        initialMessages={initialMessages}
+        sessionId={session.user.id}
+        chatPartner={chatPartner}
+        sessionImg={session.user.image}
+        chatId={chatId}
+      />
+      <ChatInput chatPartner={chatPartner} chatId={chatId} />
     </div>
   )
 }
