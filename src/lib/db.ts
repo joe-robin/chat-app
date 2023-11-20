@@ -6,4 +6,3 @@ const requester = {
 }
 
 export const db = new Redis(requester)
-console.log(db, 'db', typeof db)
