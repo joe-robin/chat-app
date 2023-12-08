@@ -29,7 +29,6 @@ export default async function Dashboard() {
 
       const [lastMessageRaw] = response
 
-
       const lastMessage = lastMessageRaw
         ? (JSON.parse(lastMessageRaw) as Message)
         : undefined
